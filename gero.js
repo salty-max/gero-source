@@ -54,6 +54,24 @@ class Gero {
     }
 
     //---------------------------------------------------
+    // Comparison operators: (> 5 10)
+    if (e[0] === ">") {
+      return this.eval(e[1], env) > this.eval(e[2], env);
+    }
+    if (e[0] === ">=") {
+      return this.eval(e[1], env) >= this.eval(e[2], env);
+    }
+    if (e[0] === "<") {
+      return this.eval(e[1], env) < this.eval(e[2], env);
+    }
+    if (e[0] === "<=") {
+      return this.eval(e[1], env) <= this.eval(e[2], env);
+    }
+    if (e[0] === "=") {
+      return this.eval(e[1], env) === this.eval(e[2], env);
+    }
+
+    //---------------------------------------------------
     // Variable declaration: (var "foo" 10)
     if (e[0] === "var") {
       const [_, name, value] = e;
@@ -78,6 +96,20 @@ class Gero {
     if (e[0] === "begin") {
       const blockEnv = new Environment({}, env);
       return this._evalBlock(e, blockEnv);
+    }
+
+    //---------------------------------------------------
+    // If: (if <condition> <consequent> <alternate>)
+    if (e[0] === "if") {
+      const [_tag, condition, consequent, alternate] = e;
+      if (this.eval(condition, env)) {
+        return this.eval(consequent, env);
+      }
+      if (alternate) {
+        return this.eval(alternate, env);
+      }
+
+      return;
     }
 
     throw `Unimplemented: ${JSON.stringify(e)}`;
