@@ -82,16 +82,30 @@ class Gero {
     }
 
     //---------------------------------------------------
-    // Function declaration: (def <name> (<params>) <body>)
-    if (e[0] === "def") {
-      const [_tag, name, params, body] = e;
-      const fn = {
+    // Lambda declaration: (lambda (<params>) <body>)
+    if (e[0] === "lambda") {
+      const [_tag, params, body] = e;
+
+      return {
         params,
         body,
         env,
       };
+    }
 
-      return env.define(name, fn);
+    //---------------------------------------------------
+    /**
+     * Function declaration: (def <name> (<params>) <body>)
+     * Syntactic sugar for (var <name> (lambda (<args>) <body>))
+     */
+
+    if (e[0] === "def") {
+      const [_tag, name, params, body] = e;
+
+      // JIT-transpile to a variable declaration
+      const varExp = ["var", name, ["lambda", params, body]];
+
+      return this.eval(varExp, env);
     }
 
     //---------------------------------------------------
