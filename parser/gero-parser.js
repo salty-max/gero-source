@@ -108,7 +108,7 @@ const lexRules = [[/^\(/, function() { return "'('"; }],
 [/^\)/, function() { return "')'"; }],
 [/^\s+/, function() { /* skip whitespaces */ }],
 [/^"[^\"]*"/, function() { return 'STRING' }],
-[/^\d+/, function() { return 'NUMBER' }],
+[/^[+-]?([0-9]*[.])?[0-9]+/, function() { return 'NUMBER' }],
 [/^[\w\-+*=<>/]+/, function() { return 'SYMBOL' }]];
 const lexRulesByConditions = {"INITIAL":[0,1,2,3,4,5]};
 
