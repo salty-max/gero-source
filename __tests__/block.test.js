@@ -2,16 +2,14 @@ const assert = require("assert");
 
 module.exports = (gero) => {
   assert.strictEqual(
+    // prettier-ignore
     gero.eval(
-      // prettier-ignore
-      [
-      "begin",
+      ["begin",
         ["var", "x", 10],
         ["var", "y", 20],
 
         ["+", ["*", "x", "y"], 30],
-    ]
-    ),
+      ]),
     230
   );
 
@@ -27,7 +25,7 @@ module.exports = (gero) => {
         ],
 
         "x",
-    ]),
+      ]),
     10
   );
 
@@ -43,7 +41,22 @@ module.exports = (gero) => {
         ]],
 
         "result",
-    ]),
+      ]),
     20
+  );
+
+  assert.strictEqual(
+    //prettier-ignore
+    gero.eval(
+      ["begin",
+        ["var", "foo", 10],
+
+        ["begin",
+          ["set", "foo", 100]
+        ],
+        
+        "foo"
+      ]),
+    100
   );
 };

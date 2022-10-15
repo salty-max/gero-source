@@ -21,6 +21,17 @@ class Environment {
   }
 
   /**
+   * Assigns given value to variable with the given name or
+   * throws if the variable is not defined.
+   * @param {string} name
+   * @param {any} value
+   */
+  assign(name, value) {
+    this.resolve(name).record[name] = value;
+    return value;
+  }
+
+  /**
    * Returns the value of a defined variable, or throws
    * if the variable is not defined.
    * @param {string} name

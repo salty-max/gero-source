@@ -61,6 +61,13 @@ class Gero {
     }
 
     //---------------------------------------------------
+    // Variable assignment: (set "foo" 10)
+    if (e[0] === "set") {
+      const [_, name, value] = e;
+      return env.assign(name, this.eval(value, env));
+    }
+
+    //---------------------------------------------------
     // Variable access: foo
     if (isVariableName(e)) {
       return env.lookup(e);
