@@ -1,10 +1,5 @@
 const assert = require("assert");
 
-/**
- * (if <condition>
- *     <consequent>
- *     <alternate>)
- */
 module.exports = (gero) => {
   assert.strictEqual(
     // prettier-ignore

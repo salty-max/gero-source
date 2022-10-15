@@ -27,7 +27,7 @@ class Gero {
    */
   eval(e, env = this.global) {
     //---------------------------------------------------
-    // Self-evaluating expressions: (1) | ("foo")
+    // Self-evaluating expressions: <exp>
     if (isNumber(e)) {
       return e;
     }
@@ -36,7 +36,7 @@ class Gero {
     }
 
     //---------------------------------------------------
-    // Math operations: (+ 2, 5)
+    // Math operations: (+ <exp>, <exp>)
     if (e[0] === "+") {
       return this.eval(e[1], env) + this.eval(e[2], env);
     }
@@ -54,7 +54,7 @@ class Gero {
     }
 
     //---------------------------------------------------
-    // Comparison operators: (> 5 10)
+    // Comparison operators: (> <exp> <exp>)
     if (e[0] === ">") {
       return this.eval(e[1], env) > this.eval(e[2], env);
     }
@@ -72,27 +72,27 @@ class Gero {
     }
 
     //---------------------------------------------------
-    // Variable declaration: (var "foo" 10)
+    // Variable declaration: (var <name> <value>)
     if (e[0] === "var") {
       const [_, name, value] = e;
       return env.define(name, this.eval(value, env));
     }
 
     //---------------------------------------------------
-    // Variable assignment: (set "foo" 10)
+    // Variable assignment: (set <name> <value>)
     if (e[0] === "set") {
       const [_, name, value] = e;
       return env.assign(name, this.eval(value, env));
     }
 
     //---------------------------------------------------
-    // Variable access: foo
+    // Variable access: <name>
     if (isVariableName(e)) {
       return env.lookup(e);
     }
 
     //---------------------------------------------------
-    // Block: sequence of expressions
+    // Block: (begin <exp>)
     if (e[0] === "begin") {
       const blockEnv = new Environment({}, env);
       return this._evalBlock(e, blockEnv);
@@ -110,6 +110,18 @@ class Gero {
       }
 
       return;
+    }
+
+    //---------------------------------------------------
+    // While: (while <condition> <body>)
+    if (e[0] === "while") {
+      let result;
+      const [_tag, condition, body] = e;
+      while (this.eval(condition, env)) {
+        result = this.eval(body, env);
+      }
+
+      return result;
     }
 
     throw `Unimplemented: ${JSON.stringify(e)}`;
