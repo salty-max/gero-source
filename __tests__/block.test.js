@@ -1,4 +1,5 @@
 const assert = require("assert");
+const testUtil = require("../test-util");
 
 module.exports = (gero) => {
   assert.strictEqual(
@@ -73,5 +74,17 @@ module.exports = (gero) => {
         "foo"
       ]),
     "world"
+  );
+
+  testUtil.test(
+    gero,
+    `
+    (begin
+      (var x 10)
+      (var y 20)
+      (+ (* x 10) y)
+    )
+  `,
+    120
   );
 };

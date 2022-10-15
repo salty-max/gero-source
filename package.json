@@ -1,5 +1,5 @@
 {
-  "name": "gero",
+  "name": "gero-source",
   "version": "0.1.1",
   "description": "A dynamic programminbg language with simple syntax, functional heart and OOP support",
   "main": "index.js",

@@ -1,5 +1,6 @@
 const Gero = require("../Gero");
 const Environment = require("../Environment");
+const testUtil = require("../test-util");
 
 const tests = [
   require("./self-eval.test"),
@@ -18,4 +19,4 @@ function exec(code) {
 
 tests.forEach((test) => test(gero));
 
-console.log("👌 All tests passed!");
+console.log("👌  All tests passed!");
