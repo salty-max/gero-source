@@ -82,6 +82,19 @@ class Gero {
     }
 
     //---------------------------------------------------
+    // Function declaration: (def <name> (<params>) <body>)
+    if (e[0] === "def") {
+      const [_tag, name, params, body] = e;
+      const fn = {
+        params,
+        body,
+        env,
+      };
+
+      return env.define(name, fn);
+    }
+
+    //---------------------------------------------------
     // Function call: (<name> ...<args>)
     if (Array.isArray(e)) {
       const fn = this.eval(e[0], env);
@@ -93,7 +106,14 @@ class Gero {
       }
 
       // 2. User-defined functions
-      // TODO
+      const activationRecord = {};
+      fn.params.forEach((p, index) => {
+        activationRecord[p] = args[index];
+      });
+
+      const activationEnv = new Environment(activationRecord, fn.env);
+
+      return this._evalBody(fn.body, activationEnv);
     }
 
     throw `Unimplemented: ${JSON.stringify(e)}`;
@@ -108,6 +128,14 @@ class Gero {
     });
 
     return result;
+  }
+
+  _evalBody(body, env) {
+    if (body[0] === "begin") {
+      return this._evalBlock(body, env);
+    }
+
+    return this.eval(body, env);
   }
 
   _isNumber(e) {
