@@ -21,6 +21,6 @@ function exec(code) {
 }
 
 tests.forEach((test) => test(gero));
-gero.eval(["print", '"Hello"', '"World!"']);
+gero.eval(["print", '"🧪   Running tests..."']);
 
 console.log("👌  All tests passed!");

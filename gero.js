@@ -1,6 +1,7 @@
 "use strict";
 
 const Environment = require("./Environment");
+const Transformer = require("./Transformer");
 
 /**
  * Gero interpreter.
@@ -11,6 +12,7 @@ class Gero {
    */
   constructor(global = GlobalEnvironment) {
     this.global = global;
+    this._transformer = new Transformer();
   }
 
   /**
@@ -70,6 +72,16 @@ class Gero {
     }
 
     //---------------------------------------------------
+    /** Switch: (switch (<cond1> <consequent1> ... (<condn> <consequentn>)(else <alternate>)))
+     * Syntactic sugar for nested if statements
+     */
+    if (e[0] === "switch") {
+      const ifExp = this._transformer.transformSwitchToIf(e);
+
+      return this.eval(ifExp, env);
+    }
+
+    //---------------------------------------------------
     // While: (while <condition> <body>)
     if (e[0] === "while") {
       let result;
@@ -100,10 +112,8 @@ class Gero {
      */
 
     if (e[0] === "def") {
-      const [_tag, name, params, body] = e;
-
       // JIT-transpile to a variable declaration
-      const varExp = ["var", name, ["lambda", params, body]];
+      const varExp = this._transformer.transformDefToVarLambda(e);
 
       return this.eval(varExp, env);
     }
