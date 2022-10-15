@@ -59,4 +59,19 @@ module.exports = (gero) => {
       ]),
     100
   );
+
+  assert.strictEqual(
+    //prettier-ignore
+    gero.eval(
+      ["begin",
+        ["var", "foo", '"hello"'],
+
+        ["begin",
+          ["set", "foo", '"world"']
+        ],
+        
+        "foo"
+      ]),
+    "world"
+  );
 };
