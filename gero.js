@@ -82,7 +82,7 @@ class Gero {
     }
 
     //---------------------------------------------------
-    // Function calls: (<name> ...<args>)
+    // Function call: (<name> ...<args>)
     if (Array.isArray(e)) {
       const fn = this.eval(e[0], env);
       const args = e.slice(1).map((arg) => this.eval(arg, env));
@@ -119,7 +119,7 @@ class Gero {
   }
 
   _isVariableName(e) {
-    return typeof e === "string" && /^[+\-*/%<>=a-zA-Z][a-zA-Z0-9_]*$/.test(e);
+    return typeof e === "string" && /^[+\-*/%<>=a-zA-Z0-9_]+$/.test(e);
   }
 }
 

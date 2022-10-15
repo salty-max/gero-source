@@ -9,6 +9,8 @@ const tests = [
   require("./block.test"),
   require("./if.test"),
   require("./while.test"),
+  require("./built-in-function.test"),
+  // require("./user-defined-function.test"),
 ];
 
 const gero = new Gero();
