@@ -1,9 +1,9 @@
-const assert = require("assert");
+const { test } = require("../test-util");
 
 module.exports = (gero) => {
-  assert.strictEqual(gero.eval(["+", 1, 5]), 6);
-  assert.strictEqual(gero.eval(["-", ["+", ["+", 3, 2], ["+", 3, 2]], 5]), 5);
-  assert.strictEqual(gero.eval(["*", ["*", 3, 2], 5]), 30);
-  assert.strictEqual(gero.eval(["/", ["*", 5, 4], 2]), 10);
-  assert.strictEqual(gero.eval(["%", 62, 5]), 2);
+  test(gero, `(+ 1 5)`, 6);
+  test(gero, `(- (+ (+ 3 2) (+ 3 2)) 5)`, 5);
+  test(gero, `(* (* 3 2) 5)`, 30);
+  test(gero, `(/ (* 5 4) 2)`, 10);
+  test(gero, `(% 32 5)`, 2);
 };

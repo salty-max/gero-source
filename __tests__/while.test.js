@@ -1,23 +1,23 @@
-const assert = require("assert");
+const { test } = require("../test-util");
 
 module.exports = (gero) => {
-  assert.strictEqual(
-    // prettier-ignore
-    gero.eval(
-      ["begin", 
-        ["var", "counter", 0],
-        ["var", "result", 0],
+  test(
+    gero,
+    `
+    (begin
+      (var counter 0)
+      (var result 0)
 
-        ["while", ["<", "counter", 10],
-          // TODO: implements ["++", <Exp>]
-          ["begin",
-            ["set", "result", ["+", "result", 1]],
-            ["set", "counter", ["+", "counter", 1]],
-          ]
-        ],
+      (while (< counter 10)
+        (begin
+          (set result (+ result 1))
+          (set counter (+ counter 1))
+        )
+      )
 
-        "result"
-      ]),
+      result
+    )
+    `,
     10
   );
 };

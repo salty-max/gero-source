@@ -1,8 +1,14 @@
-const assert = require("assert");
+const { test } = require("../test-util");
 
 module.exports = (gero) => {
-  assert.strictEqual(gero.eval(["var", "x", 1]), 1);
-  assert.strictEqual(gero.eval(["var", "y", ["*", 2, 2]]), 4);
-  assert.strictEqual(gero.eval(["var", "foo", '"bar"']), "bar");
-  assert.strictEqual(gero.eval(["var", "isTrue", "true"]), true);
+  test(gero, `(var x 1)`, 1);
+
+  // Complex declaration
+  test(gero, `(var y (* 2 2))`, 4);
+
+  // String declaration
+  test(gero, `(var foo "bar")`, "bar");
+
+  // Boolean declaration
+  test(gero, `(var is_true true)`, true);
 };

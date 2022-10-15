@@ -1,4 +1,3 @@
-const assert = require("assert");
 const { test } = require("../test-util");
 
 module.exports = (gero) => {
@@ -34,7 +33,6 @@ module.exports = (gero) => {
   );
 
   // Closure
-
   test(
     gero,
     `
@@ -61,7 +59,6 @@ module.exports = (gero) => {
   );
 
   // Recursive
-
   test(
     gero,
     `

@@ -1,6 +1,12 @@
-const assert = require("assert");
+const { test } = require("../test-util");
 
 module.exports = (gero) => {
-  assert.strictEqual(gero.eval(1), 1);
-  assert.strictEqual(gero.eval('"foo"'), "foo");
+  // Number
+  test(gero, `1`, 1);
+
+  // String
+  test(gero, `"foo"`, "foo");
+
+  // Boolean
+  test(gero, `true`, true);
 };

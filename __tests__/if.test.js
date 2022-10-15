@@ -1,36 +1,40 @@
-const assert = require("assert");
+const { test } = require("../test-util");
 
 module.exports = (gero) => {
-  assert.strictEqual(
-    // prettier-ignore
-    gero.eval(
-      ["begin", 
-        ["var", "age", 15],
-        ["var", "canDrink", "false"],
+  // Consequent only
+  test(
+    gero,
+    `
+    (begin
+      (var age 15)
+      (var can_drink false)
 
-        ["if", [">", "age", 21],
-          ["set", "canDrink", "true"],
-        ],
+      (if (>= age 21)
+        (set can_drink true)
+      )
 
-        "canDrink"
-      ]),
+      can_drink
+    )
+    `,
     false
   );
 
-  assert.strictEqual(
-    // prettier-ignore
-    gero.eval(
-      ["begin", 
-        ["var", "age", 15],
-        ["var", "canDrink", "false"],
+  // Consequent and alternate
+  test(
+    gero,
+    `
+    (begin
+      (var age 15)
+      (var can_drink false)
 
-        ["if", [">", "age", 21],
-          ["set", "canDrink", "true"],
-          ["set", "canDrink", "false"],
-        ],
+      (if (>= age 21)
+        (set can_drink true)
+        (set can_drink false)
+      )
 
-        "canDrink"
-      ]),
+      can_drink
+    )
+    `,
     false
   );
 };
