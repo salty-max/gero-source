@@ -5,11 +5,11 @@
 
 %%
 
-\s+               /* skip whitespaces */
+\s+                                 /* skip whitespaces */
 
-\"[^\"]*\"           return 'STRING'
-\d+               return 'NUMBER'
-[\w\-+*=<>/]+     return 'SYMBOL'
+\"[^\"]*\"                          return 'STRING'
+[+-]?([0-9]*[.])?[0-9]+             return 'NUMBER'
+[\w\-+*=<>/]+                       return 'SYMBOL'
 
 /lex
 
