@@ -5,8 +5,9 @@ class Environment {
   /**
    * Creates an environment with the given record.
    */
-  constructor(record = {}) {
+  constructor(record = {}, parent = null) {
     this.record = record;
+    this.parent = parent;
   }
 
   /**
@@ -26,11 +27,25 @@ class Environment {
    * @returns {any} the value of variable with the given name.
    */
   lookup(name) {
-    if (!this.record.hasOwnProperty(name)) {
+    return this.resolve(name).record[name];
+  }
+
+  /**
+   * Returns specific environment in which a variable is defined, or
+   * throws if a variable is not defined
+   * @param {string} name
+   * @returns {Environment} the environment in which the variable with the given name is defined
+   */
+  resolve(name) {
+    if (this.record.hasOwnProperty(name)) {
+      return this;
+    }
+
+    if (this.parent == null) {
       throw new ReferenceError(`Variable ${name} is not defined.`);
     }
 
-    return this.record[name];
+    return this.parent.resolve(name);
   }
 }
 

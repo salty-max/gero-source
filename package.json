@@ -1,0 +1,12 @@
+{
+  "name": "gero",
+  "version": "0.1.1",
+  "description": "A dynamic programminbg language with simple syntax, functional heart and OOP support",
+  "main": "index.js",
+  "repository": "https://github.com/salty-max/gero.git",
+  "author": "salty-max <max@jellycat.fr>",
+  "license": "MIT",
+  "scripts": {
+    "test": "node ./__tests__/run"
+  }
+}

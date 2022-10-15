@@ -1,6 +1,6 @@
 "use strict";
 
-const Environment = require("./environment");
+const Environment = require("./Environment");
 
 /**
  * Gero interpreter.
@@ -27,7 +27,7 @@ class Gero {
    */
   eval(e, env = this.global) {
     //---------------------------------------------------
-    // Self-evaluating expressions
+    // Self-evaluating expressions: (1) | ("foo")
     if (isNumber(e)) {
       return e;
     }
@@ -36,37 +36,55 @@ class Gero {
     }
 
     //---------------------------------------------------
-    // Math operations
+    // Math operations: (+ 2, 5)
     if (e[0] === "+") {
-      return this.eval(e[1]) + this.eval(e[2]);
+      return this.eval(e[1], env) + this.eval(e[2], env);
     }
     if (e[0] === "-") {
-      return this.eval(e[1]) - this.eval(e[2]);
+      return this.eval(e[1], env) - this.eval(e[2], env);
     }
     if (e[0] === "*") {
-      return this.eval(e[1]) * this.eval(e[2]);
+      return this.eval(e[1], env) * this.eval(e[2], env);
     }
     if (e[0] === "/") {
-      return this.eval(e[1]) / this.eval(e[2]);
+      return this.eval(e[1], env) / this.eval(e[2], env);
     }
     if (e[0] === "%") {
-      return this.eval(e[1]) % this.eval(e[2]);
+      return this.eval(e[1], env) % this.eval(e[2], env);
     }
 
     //---------------------------------------------------
-    // Variable declaration
+    // Variable declaration: (var "foo" 10)
     if (e[0] === "var") {
       const [_, name, value] = e;
-      return env.define(name, this.eval(value));
+      return env.define(name, this.eval(value, env));
     }
 
     //---------------------------------------------------
-    // Variable access
+    // Variable access: foo
     if (isVariableName(e)) {
       return env.lookup(e);
     }
 
+    //---------------------------------------------------
+    // Block: sequence of expressions
+    if (e[0] === "begin") {
+      const blockEnv = new Environment({}, env);
+      return this._evalBlock(e, blockEnv);
+    }
+
     throw `Unimplemented: ${JSON.stringify(e)}`;
+  }
+
+  _evalBlock(block, env) {
+    let result;
+    const [_tag, ...exps] = block;
+
+    exps.forEach((e) => {
+      result = this.eval(e, env);
+    });
+
+    return result;
   }
 }
 
