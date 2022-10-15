@@ -9,66 +9,23 @@ class Gero {
   /**
    * Creates a Gero instance with the global environment.
    */
-  constructor(
-    global = new Environment({
-      null: null,
-      true: true,
-      false: false,
-      VERSION: "0.1",
-    })
-  ) {
+  constructor(global = GlobalEnvironment) {
     this.global = global;
   }
 
   /**
-   * Evaluates an expression in the given environment
+   * Evaluates an expression in the given environment.
    * @param {any} e
    * @param {Environment} env
    */
   eval(e, env = this.global) {
     //---------------------------------------------------
     // Self-evaluating expressions: <exp>
-    if (isNumber(e)) {
+    if (this._isNumber(e)) {
       return e;
     }
-    if (isString(e)) {
+    if (this._isString(e)) {
       return e.slice(1, -1);
-    }
-
-    //---------------------------------------------------
-    // Math operations: (+ <exp>, <exp>)
-    if (e[0] === "+") {
-      return this.eval(e[1], env) + this.eval(e[2], env);
-    }
-    if (e[0] === "-") {
-      return this.eval(e[1], env) - this.eval(e[2], env);
-    }
-    if (e[0] === "*") {
-      return this.eval(e[1], env) * this.eval(e[2], env);
-    }
-    if (e[0] === "/") {
-      return this.eval(e[1], env) / this.eval(e[2], env);
-    }
-    if (e[0] === "%") {
-      return this.eval(e[1], env) % this.eval(e[2], env);
-    }
-
-    //---------------------------------------------------
-    // Comparison operators: (> <exp> <exp>)
-    if (e[0] === ">") {
-      return this.eval(e[1], env) > this.eval(e[2], env);
-    }
-    if (e[0] === ">=") {
-      return this.eval(e[1], env) >= this.eval(e[2], env);
-    }
-    if (e[0] === "<") {
-      return this.eval(e[1], env) < this.eval(e[2], env);
-    }
-    if (e[0] === "<=") {
-      return this.eval(e[1], env) <= this.eval(e[2], env);
-    }
-    if (e[0] === "=") {
-      return this.eval(e[1], env) === this.eval(e[2], env);
     }
 
     //---------------------------------------------------
@@ -87,7 +44,7 @@ class Gero {
 
     //---------------------------------------------------
     // Variable access: <name>
-    if (isVariableName(e)) {
+    if (this._isVariableName(e)) {
       return env.lookup(e);
     }
 
@@ -124,6 +81,21 @@ class Gero {
       return result;
     }
 
+    //---------------------------------------------------
+    // Function calls: (<name> ...<args>)
+    if (Array.isArray(e)) {
+      const fn = this.eval(e[0], env);
+      const args = e.slice(1).map((arg) => this.eval(arg, env));
+
+      // 1. Native functions
+      if (typeof fn === "function") {
+        return fn(...args);
+      }
+
+      // 2. User-defined functions
+      // TODO
+    }
+
     throw `Unimplemented: ${JSON.stringify(e)}`;
   }
 
@@ -137,18 +109,71 @@ class Gero {
 
     return result;
   }
+
+  _isNumber(e) {
+    return typeof e === "number";
+  }
+
+  _isString(e) {
+    return typeof e === "string" && e[0] === '"' && e.slice(-1) === '"';
+  }
+
+  _isVariableName(e) {
+    return typeof e === "string" && /^[+\-*/%<>=a-zA-Z][a-zA-Z0-9_]*$/.test(e);
+  }
 }
 
-function isNumber(e) {
-  return typeof e === "number";
-}
+/**
+ * Default global environment.
+ */
+const GlobalEnvironment = new Environment({
+  null: null,
+  true: true,
+  false: false,
+  VERSION: "0.1",
 
-function isString(e) {
-  return typeof e === "string" && e[0] === '"' && e.slice(-1) === '"';
-}
+  // Math operators
+  "+"(op1, op2) {
+    return op1 + op2;
+  },
+  "-"(op1, op2 = null) {
+    if (op2 == null) {
+      return -op1;
+    }
 
-function isVariableName(e) {
-  return typeof e === "string" && /^[a-zA-Z][a-zA-Z0-9_]*$/.test(e);
-}
+    return op1 - op2;
+  },
+  "*"(op1, op2) {
+    return op1 * op2;
+  },
+  "/"(op1, op2) {
+    return op1 / op2;
+  },
+  "%"(op1, op2) {
+    return op1 % op2;
+  },
+
+  // Comparison operators
+  ">"(op1, op2) {
+    return op1 > op2;
+  },
+  "<"(op1, op2) {
+    return op1 < op2;
+  },
+  ">="(op1, op2) {
+    return op1 >= op2;
+  },
+  "<="(op1, op2) {
+    return op1 <= op2;
+  },
+  "="(op1, op2) {
+    return op1 === op2;
+  },
+
+  // Console output
+  print(...args) {
+    console.log(...args);
+  },
+});
 
 module.exports = Gero;
