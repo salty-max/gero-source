@@ -94,6 +94,15 @@ class Gero {
     }
 
     //---------------------------------------------------
+    /** For-loop: (for <init> <condition> <modifier> <exp>)
+     *  Syntactic sugar for (begin <init> (while <condition> (begin <body> <modifier>)))
+     */
+    if (e[0] === "for") {
+      const whileExp = this._transformer.transformForToWhile(e);
+      return this.eval(whileExp, env);
+    }
+
+    //---------------------------------------------------
     // Lambda declaration: (lambda (<params>) <body>)
     if (e[0] === "lambda") {
       const [_tag, params, body] = e;

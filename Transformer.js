@@ -15,23 +15,21 @@ class Transformer {
 
   transformSwitchToIf(switchExp) {
     const [_tag, ...cases] = switchExp;
-    const ifExp = ["if", null, null, null];
-    let current = ifExp;
 
-    cases.forEach((c, index) => {
-      const [currentCond, currentBlock] = c;
-      current[1] = currentCond;
-      current[2] = currentBlock;
+    for (let i = cases.length - 1; i > 0; i--) {
+      let current = i === 0 ? 0 : i - 1;
 
-      const next = cases[index + 1];
-      const [nextCond, nextBlock] = next;
+      cases[current].push(cases[i]);
+      cases[current].unshift("if");
+    }
 
-      current[3] = nextCond === "else" ? nextBlock : ["if"];
+    return cases[0];
+  }
 
-      current = current[3];
-    });
+  transformForToWhile(forExp) {
+    const [_tag, init, condition, modifier, exp] = forExp;
 
-    return ifExp;
+    return ["begin", init, ["while", condition, ["begin", exp, modifier]]];
   }
 }
 
