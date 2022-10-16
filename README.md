@@ -13,7 +13,14 @@ A dynamic programming language with simple syntax, functional heart and OOP supp
 - Functional programming
 - Imperative programming
 - Namespaces and modules
-- OOP: class-based, prototype-based
+- OOP: class-based
+
+## Roadmap
+
+- Lists
+- Objects
+- Prototypes
+- Async / Promises
 
 ## Syntax
 
