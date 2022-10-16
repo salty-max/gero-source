@@ -14,6 +14,7 @@ const tests = [
   require("./lambda-function.test"),
   require("./switch.test"),
   require("./for-loop.test"),
+  require("./class.test"),
 ];
 
 const gero = new Gero();

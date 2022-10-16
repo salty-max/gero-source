@@ -1,7 +1,7 @@
 "use strict";
 
 const Environment = require("./Environment");
-const Transformer = require("./Transformer");
+const Transformer = require("./transform/Transformer");
 
 /**
  * Gero interpreter.
@@ -40,8 +40,18 @@ class Gero {
     //---------------------------------------------------
     // Variable assignment: (set <name> <value>)
     if (e[0] === "set") {
-      const [_, name, value] = e;
-      return env.assign(name, this.eval(value, env));
+      const [_, ref, value] = e;
+
+      // Assignment to a property
+      if (ref[0] === "prop") {
+        const [_tag, instance, propName] = ref;
+        const instanceEnv = this.eval(instance, env);
+
+        return instanceEnv.define(propName, this.eval(value, env));
+      }
+
+      // Simple assignment
+      return env.assign(ref, this.eval(value, env));
     }
 
     //---------------------------------------------------
@@ -52,7 +62,7 @@ class Gero {
 
     //---------------------------------------------------
     /** Increment: (++ <name>)
-     * Syntactic sugar for: (set <name> (+ <name> 1))
+     * Syntactic sugar for: (set <name> (+ <name> 1)).
      */
     if (e[0] === "++") {
       const setExp = this._transformer.transformIncToSet(e);
@@ -61,7 +71,7 @@ class Gero {
 
     //---------------------------------------------------
     /** Increment: (-- <name>)
-     * Syntactic sugar for: (set <name> (- <name> 1))
+     * Syntactic sugar for: (set <name> (- <name> 1)).
      */
     if (e[0] === "--") {
       const setExp = this._transformer.transformDecToSet(e);
@@ -70,7 +80,7 @@ class Gero {
 
     //---------------------------------------------------
     /** Increment by value: (+= <name> <val>)
-     * Syntactic sugar for: (set <name> (+ <name> <val>))
+     * Syntactic sugar for: (set <name> (+ <name> <val>)).
      */
     if (e[0] === "+=") {
       const setExp = this._transformer.transformIncValToSet(e);
@@ -79,7 +89,7 @@ class Gero {
 
     //---------------------------------------------------
     /** Decrement by value: (-= <name> <val>)
-     * Syntactic sugar for: (set <name> (- <name> <val>))
+     * Syntactic sugar for: (set <name> (- <name> <val>)).
      */
     if (e[0] === "-=") {
       const setExp = this._transformer.transformDecValToSet(e);
@@ -88,7 +98,7 @@ class Gero {
 
     //---------------------------------------------------
     /** Multiply by value: (*= <name> <val>)
-     * Syntactic sugar for: (set <name> (* <name> <val>))
+     * Syntactic sugar for: (set <name> (* <name> <val>)).
      */
     if (e[0] === "*=") {
       const setExp = this._transformer.transformMulValToSet(e);
@@ -97,7 +107,7 @@ class Gero {
 
     //---------------------------------------------------
     /** Divide by value: (/= <name> <val>)
-     * Syntactic sugar for: (set <name> (/ <name> <val>))
+     * Syntactic sugar for: (set <name> (/ <name> <val>)).
      */
     if (e[0] === "/=") {
       const setExp = this._transformer.transformDivValToSet(e);
@@ -127,7 +137,7 @@ class Gero {
 
     //---------------------------------------------------
     /** Switch: (switch (<cond1> <consequent1> ... (<condn> <consequentn>)(else <alternate>)))
-     * Syntactic sugar for nested if statements
+     * Syntactic sugar for nested if statements.
      */
     if (e[0] === "switch") {
       const ifExp = this._transformer.transformSwitchToIf(e);
@@ -149,7 +159,7 @@ class Gero {
 
     //---------------------------------------------------
     /** For-loop: (for <init> <condition> <modifier> <exp>)
-     *  Syntactic sugar for (begin <init> (while <condition> (begin <body> <modifier>)))
+     *  Syntactic sugar for (begin <init> (while <condition> (begin <body> <modifier>))).
      */
     if (e[0] === "for") {
       const whileExp = this._transformer.transformForToWhile(e);
@@ -171,14 +181,59 @@ class Gero {
     //---------------------------------------------------
     /**
      * Function declaration: (def <name> (<params>) <body>)
-     * Syntactic sugar for (var <name> (lambda (<args>) <body>))
+     * Syntactic sugar for (var <name> (lambda (<args>) <body>)).
      */
 
     if (e[0] === "def") {
-      // JIT-transpile to a variable declaration
+      // JIT-transpile to a variable declaration.
       const varExp = this._transformer.transformDefToVarLambda(e);
 
       return this.eval(varExp, env);
+    }
+
+    //---------------------------------------------------
+    // Class declaration: (class <name> <parent> <body>)
+    if (e[0] === "class") {
+      const [_tag, name, parent, body] = e;
+
+      // A class is an environment -- a storage of methods
+      // and shared properties.
+      const parentEnv = this.eval(parent, env) || env;
+      const classEnv = new Environment({}, parentEnv);
+
+      // Body is evaluated in the class environment.
+      this._evalBody(body, classEnv);
+
+      // Class is accessible by name.
+      return env.define(name, classEnv);
+    }
+
+    //---------------------------------------------------
+    // Class instantiation: (new <class> ...<args>)
+    if (e[0] === "new") {
+      const classEnv = this.eval(e[1], env);
+      // An instance of a class is an environment --
+      // the `parent`component of the instance environment
+      // is set to its class.
+      const instanceEnv = new Environment({}, classEnv);
+
+      const args = e.slice(2).map((arg) => this.eval(arg, env));
+
+      this._callUserDefinedFunction(classEnv.lookup("constructor"), [
+        instanceEnv,
+        ...args,
+      ]);
+
+      return instanceEnv;
+    }
+
+    //---------------------------------------------------
+    // Property access: (prop <instance> <name>)
+    if (e[0] === "prop") {
+      const [_tag, instance, name] = e;
+      const instanceEnv = this.eval(instance, env);
+
+      return instanceEnv.lookup(name);
     }
 
     //---------------------------------------------------
@@ -187,23 +242,27 @@ class Gero {
       const fn = this.eval(e[0], env);
       const args = e.slice(1).map((arg) => this.eval(arg, env));
 
-      // 1. Native functions
+      // 1. Native functions.
       if (typeof fn === "function") {
         return fn(...args);
       }
 
-      // 2. User-defined functions
-      const activationRecord = {};
-      fn.params.forEach((p, index) => {
-        activationRecord[p] = args[index];
-      });
-
-      const activationEnv = new Environment(activationRecord, fn.env);
-
-      return this._evalBody(fn.body, activationEnv);
+      // 2. User-defined functions.
+      return this._callUserDefinedFunction(fn, args);
     }
 
     throw `Unimplemented: ${JSON.stringify(e)}`;
+  }
+
+  _callUserDefinedFunction(fn, args) {
+    const activationRecord = {};
+    fn.params.forEach((p, index) => {
+      activationRecord[p] = args[index];
+    });
+
+    const activationEnv = new Environment(activationRecord, fn.env);
+
+    return this._evalBody(fn.body, activationEnv);
   }
 
   _evalBlock(block, env) {
@@ -247,7 +306,7 @@ const GlobalEnvironment = new Environment({
   false: false,
   VERSION: "0.1",
 
-  // Math operators
+  // Math operators.
   "+"(op1, op2) {
     return op1 + op2;
   },
@@ -268,7 +327,7 @@ const GlobalEnvironment = new Environment({
     return op1 % op2;
   },
 
-  // Comparison operators
+  // Comparison operators.
   ">"(op1, op2) {
     return op1 > op2;
   },
@@ -285,7 +344,7 @@ const GlobalEnvironment = new Environment({
     return op1 === op2;
   },
 
-  // Console output
+  // Console output.
   print(...args) {
     console.log(...args);
   },
