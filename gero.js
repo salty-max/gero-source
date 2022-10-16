@@ -51,6 +51,60 @@ class Gero {
     }
 
     //---------------------------------------------------
+    /** Increment: (++ <name>)
+     * Syntactic sugar for: (set <name> (+ <name> 1))
+     */
+    if (e[0] === "++") {
+      const setExp = this._transformer.transformIncToSet(e);
+      return this.eval(setExp, env);
+    }
+
+    //---------------------------------------------------
+    /** Increment: (-- <name>)
+     * Syntactic sugar for: (set <name> (- <name> 1))
+     */
+    if (e[0] === "--") {
+      const setExp = this._transformer.transformDecToSet(e);
+      return this.eval(setExp, env);
+    }
+
+    //---------------------------------------------------
+    /** Increment by value: (+= <name> <val>)
+     * Syntactic sugar for: (set <name> (+ <name> <val>))
+     */
+    if (e[0] === "+=") {
+      const setExp = this._transformer.transformIncValToSet(e);
+      return this.eval(setExp, env);
+    }
+
+    //---------------------------------------------------
+    /** Decrement by value: (-= <name> <val>)
+     * Syntactic sugar for: (set <name> (- <name> <val>))
+     */
+    if (e[0] === "-=") {
+      const setExp = this._transformer.transformDecValToSet(e);
+      return this.eval(setExp, env);
+    }
+
+    //---------------------------------------------------
+    /** Multiply by value: (*= <name> <val>)
+     * Syntactic sugar for: (set <name> (* <name> <val>))
+     */
+    if (e[0] === "*=") {
+      const setExp = this._transformer.transformMulValToSet(e);
+      return this.eval(setExp, env);
+    }
+
+    //---------------------------------------------------
+    /** Divide by value: (/= <name> <val>)
+     * Syntactic sugar for: (set <name> (/ <name> <val>))
+     */
+    if (e[0] === "/=") {
+      const setExp = this._transformer.transformDivValToSet(e);
+      return this.eval(setExp, env);
+    }
+
+    //---------------------------------------------------
     // Block: (begin <exp>)
     if (e[0] === "begin") {
       const blockEnv = new Environment({}, env);

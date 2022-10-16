@@ -31,6 +31,36 @@ class Transformer {
 
     return ["begin", init, ["while", condition, ["begin", exp, modifier]]];
   }
+
+  transformIncToSet(incExp) {
+    const [_tag, exp] = incExp;
+    return ["set", exp, ["+", exp, 1]];
+  }
+
+  transformDecToSet(decExp) {
+    const [_tag, exp] = decExp;
+    return ["set", exp, ["-", exp, 1]];
+  }
+
+  transformIncValToSet(incExp) {
+    const [_tag, exp, val] = incExp;
+    return ["set", exp, ["+", exp, val]];
+  }
+
+  transformDecValToSet(decExp) {
+    const [_tag, exp, val] = decExp;
+    return ["set", exp, ["-", exp, val]];
+  }
+
+  transformMulValToSet(mulExp) {
+    const [_tag, exp, val] = mulExp;
+    return ["set", exp, ["*", exp, val]];
+  }
+
+  transformDivValToSet(divExp) {
+    const [_tag, exp, val] = divExp;
+    return ["set", exp, ["/", exp, val]];
+  }
 }
 
 module.exports = Transformer;
