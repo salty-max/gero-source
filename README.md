@@ -36,6 +36,20 @@ true
 
 (- (+ (+ 2 3) (+ 2 3)) 20)
 >>> 10
+
+(begin
+  (var foo 1)
+  (++ foo)
+  foo
+)
+>>> 2
+
+(begin
+  (var foo 3)
+  (*= foo 2)
+  foo
+)
+>>> 6
 ```
 
 **Comparison**
@@ -75,7 +89,7 @@ x
 >>> world
 ```
 
-**If statements**
+**If statement**
 ```
 (begin
   (var age 15)
@@ -91,7 +105,20 @@ x
 >>> false
 ```
 
-**While loops**
+**Switch statement**
+```
+(begin
+  (var x 10)
+  (switch
+    ((= x 10) 100)
+    ((> x 10) 200)
+    (else 300)
+  )
+)
+>>> 100
+```
+
+**While loop**
 ```
 (begin
   (var counter 0)
@@ -107,6 +134,22 @@ x
   result
 )
 >>> 10
+```
+
+**For loop**
+```
+(begin
+  (var result 10)
+  (for 
+    (var i result)
+    (>= i 0)
+    (set i (- i 1))
+    (set result i)
+  )
+
+  result
+)
+>>> 0
 ```
 
 **Functions**
