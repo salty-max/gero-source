@@ -277,6 +277,27 @@ class Gero {
     }
 
     //---------------------------------------------------
+    // List push: (push <list> <value>)
+    if (e[0] === "push") {
+      const [_tag, listName, value] = e;
+      const listEnv = env.lookup(listName);
+      return listEnv.define(
+        Object.keys(listEnv.record).length,
+        this.eval(value, listEnv)
+      );
+    }
+
+    //---------------------------------------------------
+    // List pop: (pop <list>)
+    if (e[0] === "pop") {
+      const [_tag, listName] = e;
+      const listEnv = env.lookup(listName);
+      delete listEnv.record[String(Object.keys(listEnv.record).length - 1)];
+      console.log(listEnv);
+      return listEnv;
+    }
+
+    //---------------------------------------------------
     // Module declaration: (module <name> <body>)
     if (e[0] === "module") {
       const [_tag, name, body] = e;

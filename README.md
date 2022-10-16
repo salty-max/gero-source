@@ -17,7 +17,6 @@ A dynamic programming language with simple syntax, functional heart and OOP supp
 
 ## Roadmap
 
-- Lists
 - Objects
 - Prototypes
 - Async / Promises
@@ -157,6 +156,35 @@ result
 result
 
 >>> 0
+```
+
+### Lists
+
+**List declaration**
+```
+(var l (list "apple" "banana" "orange"))
+(idx l 0)
+
+>>> "apple"
+```
+
+**List push**
+```
+(var l (list "apple" "banana" "orange"))
+(push l "pineapple")
+(idx l 3)
+
+>>> "pineapple"
+```
+
+**List pop**
+```
+(var l (list "apple" "banana" "orange"))
+(pop l)
+(push l "pineapple")
+(idx l 2)
+
+>>> "pineapple"
 ```
 
 ### Functions
