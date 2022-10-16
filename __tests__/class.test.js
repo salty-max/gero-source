@@ -36,26 +36,7 @@ module.exports = (gero) => {
   // Inheritance
   test(
     gero,
-    `
-      (class Point null
-        (begin
-          (def constructor (self x y)
-            (begin
-              (set (prop self x) x)
-              (set (prop self y) y)
-            )
-          )
-
-          (def translate_x (self other)
-            (+= (prop self x) (prop other x))
-          )
-
-          (def translate_y (self other)
-            (+= (prop self y) (prop other y))
-          )
-        )
-      )
-      
+    ` 
       (class Point3D Point
         (begin
           (def constructor (self x y z)

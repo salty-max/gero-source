@@ -15,12 +15,16 @@ module.exports = (gero) => {
   test(
     gero,
     `
-      (var abs (prop Math abs))
-      (abs (- 10))
+      (import (Cat) Animal)
+      
+      (var p (new Cat "Max"))
+      ((prop p get_name) p)
     `,
-    10
+    "Max"
   );
 
   // Access a constant from a module
   test(gero, `(prop Math MAX_VALUE)`, 1000);
+
+  console.log(gero.global);
 };

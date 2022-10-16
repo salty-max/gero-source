@@ -1,0 +1,63 @@
+(class Animal null
+  (begin
+    (def constructor (self name)
+      (set (prop self name) name)
+    )
+
+    (def get_name (self)
+      (prop self name)
+    )
+
+    (def set_name (self str)
+      (set (prop self name) str)
+    )
+  )
+)
+
+(class Dog Animal
+  (begin
+    (def constructor(self name species)
+      (begin
+        ((prop (super Dog) constructor) self name)
+        (set (prop self species) species)
+      )
+    )
+
+    (def get_species (self)
+      (prop self species)
+    )
+
+    (def set_species (self str)
+      (set (prop self species) str)
+    )
+
+    (def bark (self)
+      (print "Woof")
+    )
+  )
+)
+
+(class Cat Animal
+  (begin
+    (def constructor(self name species)
+      (begin
+        ((prop (super Cat) constructor) self name)
+        (set (prop self species) species)
+      )
+    )
+
+    (def get_species (self)
+      (prop self species)
+    )
+
+    (def set_species (self str)
+      (set (prop self species) str)
+    )
+
+    (def meow (self)
+      (print "Meow")
+    )
+  )
+)
+
+(exports Cat)

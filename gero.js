@@ -269,19 +269,54 @@ class Gero {
     }
 
     //---------------------------------------------------
-    // Module import: (import <name>)
+    // Module import: (import <name>) | (import (...<property>) <name>)
     if (e[0] === "import") {
-      const [_tag, name] = e;
+      if (Array.isArray(e[1])) {
+        const [_tag, exps, name] = e;
+        const moduleSrc = fs.readFileSync(
+          `${__dirname}/modules/${name}.gero`,
+          "utf-8"
+        );
+        const body = evaParser.parse(`(begin ${moduleSrc})`);
+        const moduleExp = ["module", name, body];
 
-      const moduleSrc = fs.readFileSync(
-        `${__dirname}/modules/${name}.gero`,
-        "utf-8"
-      );
+        this.eval(moduleExp, this.global);
 
-      const body = evaParser.parse(`(begin ${moduleSrc})`);
-      const moduleExp = ["module", name, body];
+        return exps.forEach((exp) => {
+          const moduleEnv = env.lookup(name);
+          const exportsEnv = moduleEnv.lookup("exports");
+          const expProp = exportsEnv.lookup(exp);
 
-      return this.eval(moduleExp, this.global);
+          if (exportsEnv.record.hasOwnProperty(exp)) {
+            env.define(exp, expProp);
+          }
+        });
+      } else {
+        const [_tag, name] = e;
+        const moduleSrc = fs.readFileSync(
+          `${__dirname}/modules/${name}.gero`,
+          "utf-8"
+        );
+
+        const body = evaParser.parse(`(begin ${moduleSrc})`);
+        const moduleExp = ["module", name, body];
+
+        return this.eval(moduleExp, this.global);
+      }
+    }
+
+    //---------------------------------------------------
+    // Module exports: (exports ...<property>)
+    if (e[0] === "exports") {
+      const [_tag, ...exps] = e;
+      const exportsEnv = new Environment({}, env);
+
+      exps.forEach((exp) => {
+        const prop = env.lookup(exp);
+        exportsEnv.define(exp, prop);
+      });
+
+      return env.define("exports", exportsEnv);
     }
 
     //---------------------------------------------------

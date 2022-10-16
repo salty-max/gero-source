@@ -6,6 +6,12 @@ function test(gero, code, expected) {
   assert.strictEqual(gero.evalGlobal(exp), expected);
 }
 
+function testFalse(gero, code, expected) {
+  const exp = geroParser.parse(`(begin ${code})`);
+  assert.notStrictEqual(gero.evalGlobal(exp), expected);
+}
+
 module.exports = {
   test,
+  testFalse,
 };

@@ -17,6 +17,7 @@ const tests = [
   require("./class.test"),
   require("./module.test"),
   require("./import.test"),
+  require("./exports.test"),
 ];
 
 const gero = new Gero();
