@@ -17,6 +17,7 @@ const tests = [
   require("./module.test"),
   require("./import.test"),
   require("./exports.test"),
+  require("./list.test"),
 ];
 
 const gero = new Gero();
