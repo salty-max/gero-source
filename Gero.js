@@ -256,6 +256,27 @@ class Gero {
     }
 
     //---------------------------------------------------
+    // List declaration: (list ...<items>)
+    if (e[0] === "list") {
+      const [_tag, ...items] = e;
+      const listEnv = new Environment({}, env);
+      items.forEach((item, index) => {
+        listEnv.define(index, this.eval(item, listEnv));
+      });
+
+      return listEnv;
+    }
+
+    //---------------------------------------------------
+    // List value at index: (idx <list> <index>)
+    if (e[0] === "idx") {
+      const [_tag, listName, index] = e;
+      const listEnv = env.lookup(listName);
+
+      return listEnv.lookup(String(index));
+    }
+
+    //---------------------------------------------------
     // Module declaration: (module <name> <body>)
     if (e[0] === "module") {
       const [_tag, name, body] = e;
