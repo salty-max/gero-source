@@ -1,5 +1,4 @@
 const Gero = require("../Gero");
-const Environment = require("../Environment");
 const testUtil = require("../test-util");
 
 const tests = [
