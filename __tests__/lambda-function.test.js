@@ -5,8 +5,7 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
-      (def on_click(callback)
+      (def on_click (callback)
         (begin
           (var x 10)
           (var y 20)
@@ -15,7 +14,6 @@ module.exports = (gero) => {
       )
 
       (on_click (lambda (data) (* data 10)))
-    )
     `,
     300
   );
@@ -27,10 +25,8 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var square (lambda (x) (* x x)))
       (square 2)
-    )
     `,
     4
   );

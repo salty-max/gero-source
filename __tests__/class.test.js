@@ -4,19 +4,16 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (class Point null
         (begin
           (def constructor (self x y)
-            (begin
-              (set (prop self x) x)
-              (set (prop self y) y)
-            )
+            (set (prop self x) x)
+            (set (prop self y) y)
           )
 
           (def add (self other)
-              (+= (prop self x) (prop other x))
-              (+= (prop self y) (prop other y))
+            (+= (prop self x) (prop other x))
+            (+= (prop self y) (prop other y))
           )
         )
       )
@@ -26,7 +23,6 @@ module.exports = (gero) => {
 
       ((prop p1 add) p1 p2)
       (prop p1 x)
-    )
     `,
     15
   );

@@ -4,7 +4,6 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var result 10)
       (for 
         (var i result)
@@ -14,7 +13,6 @@ module.exports = (gero) => {
       )
 
       result
-    )
     `,
     0
   );

@@ -4,7 +4,6 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var x 10)
 
       (switch
@@ -12,7 +11,6 @@ module.exports = (gero) => {
         ((> x 10) 200)
         (else 300)
       )
-    )
     `,
     100
   );

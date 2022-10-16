@@ -4,12 +4,11 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (def square (x)
-        (* x x))
+        (* x x)
+      )
 
       (square 2)
-    )
   `,
     4
   );
@@ -18,7 +17,6 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (def calc (x y)
         (begin
           (var z 30)
@@ -27,7 +25,6 @@ module.exports = (gero) => {
       )
 
       (calc 10 20)
-    )
     `,
     230
   );
@@ -36,7 +33,6 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var value 100)
 
       (def calc (x y)
@@ -47,13 +43,12 @@ module.exports = (gero) => {
             (+ (+ foo z) value)
           )
 
-          inner
+          inner  
         )
       )
 
       (var fn (calc 10 20))
       (fn 30)
-    )
     `,
     160
   );
@@ -62,7 +57,6 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (def factorial (x)
         (if (= x 1)
           1
@@ -71,7 +65,6 @@ module.exports = (gero) => {
       )
 
       (factorial 5)
-    )
     `,
     120
   );

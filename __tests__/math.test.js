@@ -11,11 +11,9 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var foo 1)
       (++ foo)
-      foo  
-    )
+      foo 
     `,
     2
   );
@@ -23,11 +21,9 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var foo 2)
       (-- foo)
       foo  
-    )
     `,
     1
   );
@@ -35,11 +31,9 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var foo 1)
       (+= foo 2)
       foo  
-    )
     `,
     3
   );
@@ -47,11 +41,9 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var foo 3)
       (-= foo 2)
       foo  
-    )
     `,
     1
   );
@@ -59,11 +51,9 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var foo 3)
       (*= foo 2)
       foo  
-    )
     `,
     6
   );
@@ -71,11 +61,9 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var foo 4)
       (/= foo 2)
       foo  
-    )
     `,
     2
   );

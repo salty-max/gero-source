@@ -16,6 +16,13 @@ class Gero {
   }
 
   /**
+   * Evaluates global code wrapping into a block.
+   */
+  evalGlobal(exps) {
+    return this._evalBlock(["block", exps], this.global);
+  }
+
+  /**
    * Evaluates an expression in the given environment.
    * @param {any} e
    * @param {Environment} env

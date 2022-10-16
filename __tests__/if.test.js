@@ -5,7 +5,6 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var age 15)
       (var can_drink false)
 
@@ -14,7 +13,6 @@ module.exports = (gero) => {
       )
 
       can_drink
-    )
     `,
     false
   );
@@ -23,7 +21,6 @@ module.exports = (gero) => {
   test(
     gero,
     `
-    (begin
       (var age 15)
       (var can_drink false)
 
@@ -33,7 +30,6 @@ module.exports = (gero) => {
       )
 
       can_drink
-    )
     `,
     false
   );
