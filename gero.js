@@ -1,7 +1,9 @@
 "use strict";
+const fs = require("fs");
 
 const Environment = require("./Environment");
 const Transformer = require("./transform/Transformer");
+const evaParser = require("./parser/gero-parser");
 
 /**
  * Gero interpreter.
@@ -19,7 +21,7 @@ class Gero {
    * Evaluates global code wrapping into a block.
    */
   evalGlobal(exps) {
-    return this._evalBlock(["block", exps], this.global);
+    return this._evalBlock(exps, this.global);
   }
 
   /**
@@ -207,7 +209,6 @@ class Gero {
       // and shared properties.
       const parentEnv = this.eval(parent, env) || env;
       const classEnv = new Environment({}, parentEnv);
-      console.log(env);
 
       // Body is evaluated in the class environment.
       this._evalBody(body, classEnv);
@@ -253,6 +254,34 @@ class Gero {
       const instanceEnv = this.eval(instance, env);
 
       return instanceEnv.lookup(name);
+    }
+
+    //---------------------------------------------------
+    // Module declaration: (module <name> <body>)
+    if (e[0] === "module") {
+      const [_tag, name, body] = e;
+
+      const moduleEnv = new Environment({}, env);
+
+      this._evalBody(body, moduleEnv);
+
+      return env.define(name, moduleEnv);
+    }
+
+    //---------------------------------------------------
+    // Module import: (import <name>)
+    if (e[0] === "import") {
+      const [_tag, name] = e;
+
+      const moduleSrc = fs.readFileSync(
+        `${__dirname}/modules/${name}.gero`,
+        "utf-8"
+      );
+
+      const body = evaParser.parse(`(begin ${moduleSrc})`);
+      const moduleExp = ["module", name, body];
+
+      return this.eval(moduleExp, this.global);
     }
 
     //---------------------------------------------------

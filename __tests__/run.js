@@ -15,6 +15,8 @@ const tests = [
   require("./switch.test"),
   require("./for-loop.test"),
   require("./class.test"),
+  require("./module.test"),
+  require("./import.test"),
 ];
 
 const gero = new Gero();
