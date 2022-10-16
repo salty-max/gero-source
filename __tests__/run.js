@@ -23,7 +23,7 @@ function exec(code) {
   return gero.eval(code);
 }
 
+res = gero.eval(["print", '"🧪   Running tests..."']);
 tests.forEach((test) => test(gero));
-gero.eval(["print", '"🧪   Running tests..."']);
 
 console.log("👌  All tests passed!");

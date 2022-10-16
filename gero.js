@@ -207,6 +207,7 @@ class Gero {
       // and shared properties.
       const parentEnv = this.eval(parent, env) || env;
       const classEnv = new Environment({}, parentEnv);
+      console.log(env);
 
       // Body is evaluated in the class environment.
       this._evalBody(body, classEnv);
@@ -232,6 +233,17 @@ class Gero {
       ]);
 
       return instanceEnv;
+    }
+
+    //---------------------------------------------------
+    /**
+     * Class inheritance
+     * Super: (super <class>)
+     */
+    if (e[0] === "super") {
+      const [_tag, className] = e;
+
+      return this.eval(className, env).parent;
     }
 
     //---------------------------------------------------
@@ -263,6 +275,7 @@ class Gero {
 
   _callUserDefinedFunction(fn, args) {
     const activationRecord = {};
+
     fn.params.forEach((p, index) => {
       activationRecord[p] = args[index];
     });
